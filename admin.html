@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Admin Panel - Event Registrations</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<style>
+body{
+  font-family: Arial, sans-serif;
+  background:#020617;
+  color:white;
+  padding:20px;
+}
+h2{
+  text-align:center;
+}
+.top-bar{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  margin-bottom:20px;
+}
+button{
+  padding:8px 14px;
+  border:none;
+  border-radius:6px;
+  background:#7c3aed;
+  color:white;
+  cursor:pointer;
+}
+table{
+  width:100%;
+  border-collapse:collapse;
+  background:#020617;
+}
+th,td{
+  border:1px solid #444;
+  padding:10px;
+  text-align:center;
+}
+th{
+  background:#7c3aed;
+}
+tr:nth-child(even){
+  background:#111827;
+}
+</style>
+</head>
+
+<body>
+
+<div class="top-bar">
+  <h2>🔐 Admin Panel – Event Registrations</h2>
+  <button onclick="logout()">Logout</button>
+</div>
+
+<table>
+<thead>
+<tr>
+  <th>Event</th>
+  <th>Name</th>
+  <th>Email</th>
+  <th>Mobile</th>
+  <th>Date</th>
+</tr>
+</thead>
+
+<tbody id="data"></tbody>
+</table>
+
+<script>
+/* =========================
+   🔒 ADMIN SECURITY CHECK
+   ========================= */
+if(localStorage.getItem("isAdmin") !== "true"){
+  alert("⛔ Access Denied: Admin Only");
+  window.location.href = "index.html";
+}
+
+/* =========================
+   LOAD REGISTRATIONS
+   ========================= */
+let data = JSON.parse(localStorage.getItem("registrations")) || [];
+let tbody = document.getElementById("data");
+
+if(data.length === 0){
+  tbody.innerHTML = `
+    <tr>
+      <td colspan="5">No registrations found</td>
+    </tr>`;
+}else{
+  data.forEach(r=>{
+    tbody.innerHTML += `
+    <tr>
+      <td>${r.event}</td>
+      <td>${r.name}</td>
+      <td>${r.email}</td>
+      <td>${r.mobile}</td>
+      <td>${r.date}</td>
+    </tr>`;
+  });
+}
+
+/* =========================
+   LOGOUT FUNCTION
+   ========================= */
+function logout(){
+  localStorage.removeItem("isAdmin");
+  alert("✅ Logged out successfully");
+  window.location.href = "index.html";
+}
+</script>
+
+</body>
+</html>

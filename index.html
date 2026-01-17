@@ -1,0 +1,389 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>College Event Hub</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<style>
+*{box-sizing:border-box}
+body{
+margin:0;
+font-family:Segoe UI,sans-serif;
+background:radial-gradient(circle at top,#312e81,#020617);
+color:white;
+}
+
+/* LOGIN */
+.login{
+height:100vh;
+display:flex;
+justify-content:center;
+align-items:center;
+}
+.login-box{
+width:340px;
+background:#020617;
+padding:25px;
+border-radius:18px;
+text-align:center;
+}
+.login-box input,button{
+width:100%;
+padding:12px;
+margin-top:12px;
+border:none;
+border-radius:8px;
+}
+button{background:#7c3aed;color:white;cursor:pointer}
+
+/* HOME */
+
+
+.container{max-width:1300px;margin:auto;padding:40px 20px;}
+.grid{
+display:grid;
+grid-template-columns:repeat(auto-fit,minmax(250px,1fr));
+gap:25px;
+}
+.card{
+background:black;
+border-radius:20px;
+overflow:hidden;
+cursor:pointer;
+transition:.3s;
+}
+.card:hover{transform:scale(1.05)}
+.card img{width:100%;height:190px;object-fit:cover}
+.card h2{text-align:center;padding:15px}
+
+/* EVENTS */
+.events{display:none}
+.back{
+background:#7c3aed;
+padding:10px 16px;
+border-radius:8px;
+cursor:pointer;
+margin-bottom:20px;
+display:inline-block;
+}
+.event-grid{
+display:grid;
+grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+gap:20px;
+}
+.event{
+background:#020617;
+border-radius:16px;
+overflow:hidden;
+cursor:pointer;
+transition:.3s;
+}
+.event:hover{transform:scale(1.05)}
+.event img{width:100%;height:150px;object-fit:cover}
+.event h3{text-align:center;padding:10px}
+
+/* MODAL */
+.modal{
+display:none;
+position:fixed;
+inset:0;
+background:rgba(0,0,0,.85);
+justify-content:center;
+align-items:center;
+}
+.modal-box{
+background:#020617;
+width:90%;
+max-width:480px;
+padding:20px;
+border-radius:16px;
+position:relative;
+}
+.modal img{
+width:100%;
+height:180px;
+object-fit:cover;
+border-radius:10px;
+}
+.close{
+position:absolute;
+top:10px;
+right:15px;
+font-size:22px;
+cursor:pointer;
+}
+.modal input{
+width:100%;
+padding:10px;
+margin-top:10px;
+border:none;
+border-radius:6px;
+}
+.modal button{
+margin-top:15px;
+width:100%;
+padding:12px;
+background:#7c3aed;
+border:none;
+color:white;
+border-radius:8px;
+cursor:pointer;
+}
+.info p{margin:6px 0}
+</style>
+</head>
+
+<body>
+<!-- Admin link -->
+<div style="padding:18px; text-align:right;">
+  <a href="admin.html" id="adminLink" target="_blank"
+  style="color:white; background:#7c3aed; padding:10px 15px; border-radius:8px; text-decoration:none;">
+  🔐 Admin Panel
+  </a>
+</div>
+
+<!-- LOGIN -->
+<div class="login" id="loginPage">
+  <div class="login-box">
+    <h2>Login</h2>
+    <input id="email" placeholder="Email">
+    <input id="pass" type="password" placeholder="Password">
+    <button onclick="login()">Login</button>
+  </div>
+</div>
+
+<!-- HOME -->
+<div id="eventPage" style="display:none">
+<div class="container" id="home">
+<div class="grid">
+
+<div class="card" onclick="openCategory('tech')">
+<img src="https://images.unsplash.com/photo-1521737604893-d14cc237f11d">
+<h2>🎓 Tech Fest</h2>
+</div>
+
+<div class="card" onclick="openCategory('cultural')">
+<img src="https://images.unsplash.com/photo-1515168833906-d2a3b82b302a">
+<h2>🎭 Cultural Fest</h2>
+</div>
+
+<div class="card" onclick="openCategory('sports')">
+<img src="https://images.unsplash.com/photo-1508609349937-5ec4ae374ebf">
+<h2>⚽ Sports Meet</h2>
+</div>
+
+<div class="card" onclick="openCategory('management')">
+<img src="https://images.unsplash.com/photo-1556761175-4b46a572b786">
+<h2>🎤 Management Fest</h2>
+</div>
+
+<div class="card" onclick="openCategory('special')">
+<img src="https://images.unsplash.com/photo-1507874457470-272b3c8d8ee2">
+<h2>🎉 Special Events</h2>
+</div>
+
+</div>
+</div>
+
+<!-- CATEGORIES -->
+<div class="container events" id="tech">
+<div class="back" onclick="goHome()">← Back</div>
+<div class="event-grid" id="techEvents"></div>
+</div>
+
+<div class="container events" id="cultural">
+<div class="back" onclick="goHome()">← Back</div>
+<div class="event-grid" id="culturalEvents"></div>
+</div>
+
+<div class="container events" id="sports">
+<div class="back" onclick="goHome()">← Back</div>
+<div class="event-grid" id="sportsEvents"></div>
+</div>
+
+<div class="container events" id="management">
+<div class="back" onclick="goHome()">← Back</div>
+<div class="event-grid" id="managementEvents"></div>
+</div>
+
+<div class="container events" id="special">
+<div class="back" onclick="goHome()">← Back</div>
+<div class="event-grid" id="specialEvents"></div>
+</div>
+
+<!-- MODAL -->
+<div class="modal" id="modal">
+<div class="modal-box">
+<span class="close" onclick="closeModal()">×</span>
+<img id="mImg">
+<h2 id="mTitle"></h2>
+<p id="mShortDesc"></p>
+
+<div class="info">
+<p><b>Description:</b> <span id="mDesc"></span></p>
+<p><b>Date:</b> <span id="mDate"></span></p>
+<p><b>Time:</b> <span id="mTime"></span></p>
+<p><b>Place:</b> <span id="mPlace"></span></p>
+</div>
+
+<h3>Register</h3>
+<input id="rName" placeholder="Your Name">
+<input id="rEmail" placeholder="Email">
+<input id="rMobile" placeholder="Mobile">
+<button onclick="register()">Register</button>
+</div>
+</div>
+
+<script>
+/* AUTO ADMIN (YOU ARE ADMIN) */
+localStorage.setItem("isAdmin","true");
+
+
+/* ADMIN CREDENTIALS */
+const ADMIN_EMAIL = "sanskruti@admin.com";   // apna email
+const ADMIN_PASS  = "12345";                 // apna password
+
+
+const loginPage = document.getElementById("loginPage");
+const eventPage = document.getElementById("eventPage");
+const home=document.getElementById("home");
+const modal=document.getElementById("modal");
+let selectedEvent = "";
+// element references used by modal / registration
+const mTitle = document.getElementById('mTitle');
+const mShortDesc = document.getElementById('mShortDesc');
+const mDesc = document.getElementById('mDesc');
+const mDate = document.getElementById('mDate');
+const mTime = document.getElementById('mTime');
+const mPlace = document.getElementById('mPlace');
+const mImg = document.getElementById('mImg');
+const rName = document.getElementById('rName');
+const rEmail = document.getElementById('rEmail');
+const rMobile = document.getElementById('rMobile');
+
+function login(){
+  let email = document.getElementById("email").value;
+  let pass  = document.getElementById("pass").value;
+
+  if(email === ADMIN_EMAIL && pass === ADMIN_PASS){
+    localStorage.setItem("isAdmin","true");
+    document.getElementById("adminLink").style.display="inline-block";
+    alert("✅ Welcome Admin");
+  }else{
+    localStorage.setItem("isAdmin","false");
+  }
+
+  loginPage.style.display="none";
+  eventPage.style.display="block";
+}
+
+
+function openCategory(id){
+home.style.display="none";
+document.querySelectorAll(".events").forEach(e=>e.style.display="none");
+document.getElementById(id).style.display="block";
+}
+function goHome(){
+home.style.display="block";
+document.querySelectorAll(".events").forEach(e=>e.style.display="none");
+}
+
+
+let currentEvent
+function openModal(e){
+// set selected event and populate modal
+currentEvent = e.title;
+mTitle.innerText = e.title;
+mShortDesc.innerText = e.desc;
+mDesc.innerText = e.desc;
+mDate.innerText = e.date;
+mTime.innerText = e.time;
+mPlace.innerText = e.place;
+mImg.src = e.img;
+modal.style.display = "flex";
+}
+
+function closeModal(){modal.style.display="none";}
+
+function register(){
+let n = rName.value.trim();
+let e = rEmail.value.trim();
+let m = rMobile.value.trim();
+
+if(n==="" || e==="" || m===""){
+alert("❌ Please fill all details");
+return;
+}
+
+let registrations = JSON.parse(localStorage.getItem("registrations")) || [];
+
+registrations.push({
+event: currentEvent,
+name: n,
+email: e,
+mobile: m,
+date: new Date().toLocaleString()
+});
+
+localStorage.setItem("registrations", JSON.stringify(registrations));
+
+alert("🎉 Registration Successful for " + currentEvent);
+
+closeModal();
+rName.value = rEmail.value = rMobile.value = "";
+}
+
+
+
+
+function load(list,target){
+target.innerHTML="";
+list.forEach(e=>{
+target.innerHTML+=`
+<div class="event" onclick='openModal(${JSON.stringify(e)})'>
+<img src="${e.img}">
+<h3>${e.title}</h3>
+</div>`;
+});
+}
+
+/* DATA */
+load([
+{title:"Hackathon",desc:"24 hour coding challenge",date:"28 March",time:"10 AM",place:"Lab 1",img:"https://images.unsplash.com/photo-1518770660439-4636190af475"},
+{title:"Coding Contest",desc:"Programming Challenge" ,date:"26 may",time:"9 AM",place:"Lab 5",img:"https://images.unsplash.com/photo-1519389950473-47ba0277781c"},
+{title:"AI Workshop",desc:"AI & ML basics",date:"26 March",time:"11 AM",place:"Seminar Hall",img:"https://images.unsplash.com/photo-1555949963-aa79dcee981c"}
+],techEvents);
+
+load([
+{title:"Fashion Show",desc:"Style & Glamour",date:"27 March",time:"6 PM",place:"Auditorium",img:"https://images.unsplash.com/photo-1503341455253-b2e723bb3dbb"},
+{title:"Solo Dance",desc:"Dance Performance",date:"27 March",time:"4 PM",place:"Auditorium",img:"https://images.unsplash.com/photo-1515168833906-d2a3b82b302a"},
+{title:"Singing",desc:"Music Competition",date:"27 march",time:"5 PM",place:"Auditorium",img:"https://images.unsplash.com/photo-1497032205916-ac775f0649ae"}
+],culturalEvents);
+
+load([
+{title:"Cricket",desc:"Team Match",date:"28 March",time:"9 AM",place:"Ground",img:"https://images.unsplash.com/photo-1540747913346-19e32dc3e97e"},
+{title:"Football",desc:"League Match",date:"28 March",time:"3 PM",place:"Main Ground",img:"https://images.unsplash.com/photo-1521412644187-c49fa049e84d"},
+{title:"Kabaddi",desc:"Traditional Sport", date:"28 march",time:"12 PM",place:"Ground",img:"https://images.unsplash.com/photo-1533105079978-9c3f1c0c2f3b"}
+],sportsEvents);
+
+
+load([
+{title:"Business Plan",desc:"Startup Ideas",date:"19 may",time:"10 AM",place:"Auditorium",img:"https://images.unsplash.com/photo-1556761175-4b46a572b786"},
+{title:"Debate",desc:"Group Discussion",date:"19 may",time:"11 AM",place:"Auditorium",img:"https://images.unsplash.com/photo-1521737604893-d14cc237f11d"}
+],managementEvents);
+
+load([
+{title:"Freshers Party",desc:"Welcome Event",date:"12 july",time:"10 AM",place:"Auditorium",img:"https://images.unsplash.com/photo-1504461922389-7a90d7f3b6f6"},
+{title:"DJ Night",desc:"Music Night",date:"19 may",time:"10 PM",place :"Auditorium",img:"https://images.unsplash.com/photo-1507874457470-272b3c8d8ee2?auto=format&fit=crop&w=800&q=80"}
+],specialEvents);
+
+if(localStorage.getItem("isAdmin")==="true"){
+  document.getElementById("adminLink").style.display="inline-block";
+}
+
+
+</script>
+
+</body>
+</html>
